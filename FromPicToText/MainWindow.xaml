@@ -1,0 +1,35 @@
+﻿<Window x:Class="FromPicToText.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FromPicToText"
+        mc:Ignorable="d"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        Title="FPTT" Height="450" Width="800" ResizeMode="CanMinimize">
+    <Grid>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Label HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" FontSize="48" Background="{x:Null}" MouseDown="openGithub">FPTT</Label>
+            <Label HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" FontWeight="Bold" Margin="0,-20,0,20">From Pic To Text</Label>
+            <Button x:Name="SupportButton" Width="200" Height="40" Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Center" Background="#7F00DCFF" BorderBrush="#FF00B9FF" Foreground="White" Click="SupportButton_Click" FontWeight="Normal">Support me</Button>
+            <Button x:Name="LastButton" Width="200" Height="40" Margin="0,0,0,10"  HorizontalAlignment="Center" VerticalAlignment="Center" Click="LastButton_Click">Open last file</Button>
+            <Button x:Name="LoadButton" Width="200" Height="40" Margin="0,0,0,10" Click="Button_Click" HorizontalAlignment="Center" VerticalAlignment="Center">Load</Button>
+            <Label HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">Render Method</Label>
+            <ComboBox x:Name="CB_Method" Width="200" HorizontalAlignment="Center" >
+                <ComboBoxItem Content="Char with Brightness" />
+                <ComboBoxItem Content="Points with Brightness" />
+                <ComboBoxItem Content="Char with RGB" />
+                <ComboBoxItem Content="Points with RGB" />
+            </ComboBox>
+            <ProgressBar x:Name="pixelPercent" Value="0" materialDesign:TransitionAssist.DisableTransitions="True" Height="10" Margin="0,10,0,0" Width="400" />
+            <TextBlock x:Name="perventValue" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,5,0,0" Width="200" TextAlignment="Center">0%</TextBlock>
+        </StackPanel>
+    </Grid>
+</Window>
