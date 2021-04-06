@@ -28,8 +28,10 @@ namespace FromPicToText
     {
         string fileDirecotry;
         string txtFile = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\image.txt";
+        string brailleMap = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\brailleMapping.conf";
         string content;
         Thread converter;
+        
         public MainWindow()
         {
             InitializeComponent();
@@ -70,6 +72,10 @@ namespace FromPicToText
                 case "Points with RGB":
                     converter = new Thread(new ThreadStart(imageRGBPointControl));
                     break;
+                case "Braille BETA":
+                    converter = new Thread(new ThreadStart(brailleBrightness));
+
+                    break;
                 default:
                     MessageBox.Show("you have to select the render method!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
@@ -79,6 +85,7 @@ namespace FromPicToText
             ((Button)sender).IsEnabled = false;
         }
 
+        #region image opener
         private void imageBrightnessCharControl()
         {
 
@@ -238,7 +245,8 @@ namespace FromPicToText
                 MessageBox.Show(e.Message);
             }
         }
-
+        #endregion
+        #region Render Method
         void textBrightnessChar(System.Drawing.Color pixel)
         {
             if (pixel.GetBrightness() <= 0.20)
@@ -309,6 +317,92 @@ namespace FromPicToText
             else
             if (pixel.R == pixel.G && pixel.R == pixel.B && pixel.R > 127)
                 content += "  ";
+        }
+        #endregion
+
+        //test with braille char
+        // ⠁ ⠂ ⠃ ⠄ ⠅ ⠆ ⠇ ⠈ ⠉ ⠊ ⠋ ⠌ ⠍ ⠎ ⠏ ⠐ ⠑ ⠒ ⠓ ⠔ ⠕ ⠖ ⠗ ⠘ ⠙ ⠚ ⠛ ⠜ ⠝ ⠞ ⠟ ⠠ ⠡ ⠢ ⠣ ⠤ ⠥ ⠦ ⠧ ⠨ ⠩ ⠪ ⠫ ⠬ ⠭ ⠮ ⠯ ⠰ ⠱ ⠲ ⠳ ⠴ ⠵ ⠶ ⠷ ⠸ ⠹ ⠺ ⠻ ⠼ ⠽ ⠾ ⠿
+        //check 6 pixel with 50% of brightness for each one and find the right char
+        void brailleBrightness()
+        {
+            double pixelCont = 0;
+            try
+            {
+                // Retrieve the image.
+                var image1 = new Bitmap(@"" + fileDirecotry, true);
+                double pixelImage = image1.Height * image1.Width;
+                int x = 0, y = 0;
+                string currentChar="";
+
+                // Loop through the images pixels to reset color.
+                for (y = 0; y < image1.Height; y += 3)
+                {
+                    for (x = 0; x < image1.Width; x += 2)
+                    {
+                        for (int i = 0; i < 3; i++)
+                        {
+                            for (int j = 0; j < 2; j++)
+                            {
+                                if (image1.GetPixel(x + j, y + i).GetBrightness() >= 0.5)
+                                    currentChar += "0";
+                                else
+                                    currentChar += "1";
+
+                                pixelCont++;
+                                pixelPercent.Dispatcher.BeginInvoke((Action)(() =>
+                                {
+                                    pixelPercent.Value = (pixelCont / pixelImage) * 100;
+                                    perventValue.Text = ((int)pixelPercent.Value).ToString() + "%";
+                                }));
+                            }
+                            currentChar += i==2? "":" ";
+                        }
+                        checkbraillecode(currentChar);
+                        currentChar = "";
+                        if ((x + 2) >= image1.Width-1)
+                            break;
+                    }
+                    if ((y + 3) >= image1.Height-1)
+                        break;
+                    content += "\n";
+                }
+                writer(content);
+            }
+            catch (ArgumentException e)
+            {
+                if (pixelCont > 0)
+                {
+                    MessageBox.Show("the resault won't be the best", "Result information", MessageBoxButton.OK, MessageBoxImage.Information);
+                    writer(content);
+                }else
+                    MessageBox.Show("your image is not compatible", "Image Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            Process.Start(txtFile);
+            LoadButton.Dispatcher.BeginInvoke((Action)(() =>
+            {
+                pixelPercent.Value = 100;
+                perventValue.Text = "100%";
+                LoadButton.IsEnabled = true;
+            }));
+        }
+
+        void checkbraillecode(string code)
+        {
+            if (File.Exists(brailleMap))
+            {
+                string[] brailleAlph = File.ReadAllText(brailleMap).Replace("\r\n", "").Split(',');
+                foreach (var item in brailleAlph)
+                {
+                    if (item.Split('=')[0] == code)
+                    {
+                        content += item.Split('=')[1];
+                        return;
+                    }
+                }
+            }
+            else
+                MessageBox.Show("There are some problem, brailleMapping.conf doesn't exists");
         }
 
         void writer(string textLines)
