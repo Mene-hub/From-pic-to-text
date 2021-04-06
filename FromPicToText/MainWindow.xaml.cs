@@ -26,18 +26,58 @@ namespace FromPicToText
     /// </summary>
     public partial class MainWindow : Window
     {
+        #region Vars
         string fileDirecotry;
         string txtFile = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\image.txt";
         string brailleMap = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\brailleMapping.conf";
         string content;
         Thread converter;
-        
+        #endregion
+
+        #region char map
+        string char1 = "██";
+        string char2 = "▓▓";
+        string char3 = "▒▒";
+        string char4 = "░░";
+        string char5 = "  ";
+        string point1 = "##";
+        string point2 = "==";
+        string point3 = "--";
+        string point4 = "..";
+        string zero = "0";
+        string uno = "1";
+        string[] chars;
+        string[] points;
+        string[] boolean;
+        void invert()
+        {
+            if(chars[0]!=char1)
+                chars = new string[] { char1, char2, char3, char4, char5 };
+            else
+                chars = new string[] { char5, char4, char3, char2, char1 };
+
+            if(points[0]!=point1)
+                points = new string[] { point1, point2, point3, point4, char5 };
+            else
+                points = new string[] { char5, point4, point3, point2, point1 };
+
+            if(boolean[0]==uno)
+                boolean = new string[] { zero, uno };
+            else
+                boolean = new string[] { uno, zero };
+        }
+        #endregion
+
+        #region Window region
         public MainWindow()
         {
             InitializeComponent();
             fileCheck();
             pixelPercent.Value = 0;
             perventValue.Text = "0%";
+            chars = new string[] { char1, char2, char3, char4, char5 };
+            points = new string[] { point1, point2, point3, point4, char5 };
+            boolean = new string[] { zero, uno};
             Window.GetWindow(this).Title = "FPTT " + Assembly.GetExecutingAssembly().GetName().ToString().Split('=')[1].Split(',')[0];
             if (File.Exists(txtFile))
                 if (File.ReadAllText(txtFile).ToString() != "" && File.ReadLines(txtFile).First() == "DECREASE THE CHARACTER SIZE ;)")
@@ -83,9 +123,17 @@ namespace FromPicToText
 
             converter.Start();
             ((Button)sender).IsEnabled = false;
+            invertBox.IsEnabled = false;
         }
 
-        #region image opener
+        private void invertCheck(object sender, RoutedEventArgs e)
+        {
+            invert();
+        }
+
+        #endregion
+
+        #region image readers
         private void imageBrightnessCharControl()
         {
 
@@ -118,6 +166,7 @@ namespace FromPicToText
                 LoadButton.Dispatcher.BeginInvoke((Action)(() =>
                 {
                     LoadButton.IsEnabled = true;
+                    invertBox.IsEnabled = true;
                 }));
             }
             catch (ArgumentException e)
@@ -158,6 +207,7 @@ namespace FromPicToText
                 LoadButton.Dispatcher.BeginInvoke((Action)(() =>
                 {
                     LoadButton.IsEnabled = true;
+                    invertBox.IsEnabled = true;
                 }));
             }
             catch (ArgumentException e)
@@ -198,6 +248,7 @@ namespace FromPicToText
                 LoadButton.Dispatcher.BeginInvoke((Action)(() =>
                 {
                     LoadButton.IsEnabled = true;
+                    invertBox.IsEnabled = true;
                 }));
             }
             catch (ArgumentException e)
@@ -238,6 +289,7 @@ namespace FromPicToText
                 LoadButton.Dispatcher.BeginInvoke((Action)(() =>
                 {
                     LoadButton.IsEnabled = true;
+                    invertBox.IsEnabled = true;
                 }));
             }
             catch (ArgumentException e)
@@ -246,80 +298,82 @@ namespace FromPicToText
             }
         }
         #endregion
-        #region Render Method
+
+        #region Render Methods
         void textBrightnessChar(System.Drawing.Color pixel)
         {
             if (pixel.GetBrightness() <= 0.20)
-                content += "██";
+                content += chars[0];
             else
             if (pixel.GetBrightness() <= 0.40)
-                content += "▓▓";
+                content += chars[1];
             else
             if (pixel.GetBrightness() <= 0.60)
-                content += "▒▒";
+                content += chars[2];
             else
             if (pixel.GetBrightness() <= 0.80)
-                content += "░░";
+                content += chars[3];
             else
             if (pixel.GetBrightness() <= 1)
-                content += "  ";
+                content += chars[4];
         }
 
         void textBrightnessPoint(System.Drawing.Color pixel)
         {
             if (pixel.GetBrightness() <= 0.20)
-                content += "##";
+                content += points[0];
             else
             if (pixel.GetBrightness() <= 0.40)
-                content += "==";
+                content += points[1];
             else
             if (pixel.GetBrightness() <= 0.60)
-                content += "--";
+                content += points[2];
             else
             if (pixel.GetBrightness() <= 0.80)
-                content += "..";
+                content += points[3];
             else
             if (pixel.GetBrightness() <= 1)
-                content += "  ";
+                content += points[4];
         }
 
         void textRGBPoint(System.Drawing.Color pixel)
         {
             if (pixel.R > pixel.G && pixel.R > pixel.B)
-                content += "..";
+                content += points[0];
             else
             if (pixel.G > pixel.R && pixel.G > pixel.B)
-                content += "==";
+                content += points[1];
             else
             if (pixel.B > pixel.G && pixel.B > pixel.R)
-                content += "--";
+                content += points[2];
             else
             if (pixel.R == pixel.G && pixel.R == pixel.B && pixel.R <= 127)
-                content += "##";
+                content += points[3];
             else
             if (pixel.R == pixel.G && pixel.R == pixel.B && pixel.R > 127)
-                content += "  ";
+                content += points[4];
         }
 
         void textRGBChar(System.Drawing.Color pixel)
         {
             if (pixel.R > pixel.G && pixel.R > pixel.B)
-                content += "▓▓";
+                content += chars[0];
             else
             if (pixel.G > pixel.R && pixel.G > pixel.B)
-                content += "▒▒";
+                content += chars[1];
             else
             if (pixel.B > pixel.G && pixel.B > pixel.R)
-                content += "░░";
+                content += chars[2];
             else
             if (pixel.R == pixel.G && pixel.R == pixel.B && pixel.R <= 127)
-                content += "██";
+                content += chars[3];
             else
             if (pixel.R == pixel.G && pixel.R == pixel.B && pixel.R > 127)
-                content += "  ";
+                content += chars[4];
         }
         #endregion
 
+        #region braille
         //test with braille char
         // ⠁ ⠂ ⠃ ⠄ ⠅ ⠆ ⠇ ⠈ ⠉ ⠊ ⠋ ⠌ ⠍ ⠎ ⠏ ⠐ ⠑ ⠒ ⠓ ⠔ ⠕ ⠖ ⠗ ⠘ ⠙ ⠚ ⠛ ⠜ ⠝ ⠞ ⠟ ⠠ ⠡ ⠢ ⠣ ⠤ ⠥ ⠦ ⠧ ⠨ ⠩ ⠪ ⠫ ⠬ ⠭ ⠮ ⠯ ⠰ ⠱ ⠲ ⠳ ⠴ ⠵ ⠶ ⠷ ⠸ ⠹ ⠺ ⠻ ⠼ ⠽ ⠾ ⠿
         //check 6 pixel with 50% of brightness for each one and find the right char
@@ -344,9 +398,9 @@ namespace FromPicToText
                             for (int j = 0; j < 2; j++)
                             {
                                 if (image1.GetPixel(x + j, y + i).GetBrightness() >= 0.5)
-                                    currentChar += "0";
+                                    currentChar += boolean[0];
                                 else
-                                    currentChar += "1";
+                                    currentChar += boolean[1];
 
                                 pixelCont++;
                                 pixelPercent.Dispatcher.BeginInvoke((Action)(() =>
@@ -384,6 +438,7 @@ namespace FromPicToText
                 pixelPercent.Value = 100;
                 perventValue.Text = "100%";
                 LoadButton.IsEnabled = true;
+                invertBox.IsEnabled = true;
             }));
         }
 
@@ -404,7 +459,9 @@ namespace FromPicToText
             else
                 MessageBox.Show("There are some problem, brailleMapping.conf doesn't exists");
         }
+        #endregion
 
+        #region File managment
         void writer(string textLines)
         {
             using (StreamWriter writer = new StreamWriter(txtFile))
@@ -432,7 +489,9 @@ namespace FromPicToText
                 MessageBox.Show("there is not a recent file", "Last file not found", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 
         }
+        #endregion
 
+        #region Link management
         private void SupportButton_Click(object sender, RoutedEventArgs e)
         {
             System.Diagnostics.Process.Start("https://www.paypal.com/paypalme/MeneBot");
@@ -442,5 +501,7 @@ namespace FromPicToText
         {
             System.Diagnostics.Process.Start("https://github.com/Mene-hub");
         }
+        #endregion
+
     }
 }
