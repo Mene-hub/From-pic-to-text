@@ -30,7 +30,11 @@ namespace FromPicToText
         string fileDirecotry;
         string txtFile = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\image.txt";
         string brailleMap = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\brailleMapping.conf";
+        string framesDirectory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\frames.frs";
+        string frames;
+
         string content;
+        string[] args;
         Thread converter;
         #endregion
 
@@ -297,6 +301,7 @@ namespace FromPicToText
                 MessageBox.Show(e.Message);
             }
         }
+
         #endregion
 
         #region Render Methods
@@ -491,6 +496,44 @@ namespace FromPicToText
         }
         #endregion
 
+        #region Test console
+        private void PLayerButton_Click(object sender, RoutedEventArgs e)
+        {
+            frames = "";
+            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+            dialog.InitialDirectory = "";
+            dialog.IsFolderPicker = true;
+            string[] files;
+            //string sequence_directory;
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                fileDirecotry = dialog.FileName;
+            }
+            else
+                return;
+
+            //processing images, put in frames.frs splitted by ';'
+            files = Directory.GetFiles(fileDirecotry);
+
+            foreach (var item in files)
+            {
+                fileDirecotry = item;
+                imageBrightnessCharControl();
+                content = "";
+                frames += File.ReadAllText(txtFile) + ";\n";
+            }
+
+            File.WriteAllText(framesDirectory, frames);
+            ShowConsole();
+        }
+        public void ShowConsole()
+        {
+            ProcessStartInfo info = new ProcessStartInfo();
+            info.FileName = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\Player\CharactersVideoPlayer.exe";
+            Process.Start(info);
+        }
+        #endregion
+
         #region Link management
         private void SupportButton_Click(object sender, RoutedEventArgs e)
         {
@@ -502,6 +545,5 @@ namespace FromPicToText
             System.Diagnostics.Process.Start("https://github.com/Mene-hub");
         }
         #endregion
-
     }
 }
