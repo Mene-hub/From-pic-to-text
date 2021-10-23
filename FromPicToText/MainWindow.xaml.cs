@@ -1,4 +1,5 @@
-﻿using Microsoft.WindowsAPICodePack.Dialogs;
+﻿using Microsoft.Win32;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -86,16 +87,27 @@ namespace FromPicToText
             if (File.Exists(txtFile))
                 if (File.ReadAllText(txtFile).ToString() != "" && File.ReadLines(txtFile).First() == "DECREASE THE CHARACTER SIZE ;)")
                     Process.Start(txtFile);
+
+            if (StartPath.path != null)
+            {
+                fileDirecotry = StartPath.path;
+                converter = new Thread(new ThreadStart(imageBrightnessCharControl));
+                converter.Start();
+                LoadButton.IsEnabled = false;
+                invertBox.IsEnabled = false;
+            }
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             content = "";
-            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+            OpenFileDialog dialog = new OpenFileDialog();
             dialog.InitialDirectory = "";
-            dialog.IsFolderPicker = false;
+            dialog.Filter = "png File |*.png";
             perventValue.Text = "0%";
             pixelPercent.Value = 0;
-            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            var resp = dialog.ShowDialog();
+
+            if (resp == true)
             {
                 fileDirecotry = dialog.FileName;
             }
@@ -545,5 +557,6 @@ namespace FromPicToText
             System.Diagnostics.Process.Start("https://github.com/Mene-hub");
         }
         #endregion
+
     }
 }

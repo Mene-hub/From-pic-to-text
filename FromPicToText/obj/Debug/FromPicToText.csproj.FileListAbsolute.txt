@@ -1,4 +1,3 @@
-C:\Users\Claudio\source\repos\FPTT\FromPicToText\obj\Debug\FromPicToText.csprojAssemblyReference.cache
 C:\Users\Claudio\source\repos\FPTT\FromPicToText\obj\Debug\MainWindow.g.cs
 C:\Users\Claudio\source\repos\FPTT\FromPicToText\obj\Debug\App.g.cs
 C:\Users\Claudio\source\repos\FPTT\FromPicToText\obj\Debug\FromPicToText_MarkupCompile.cache
@@ -22,6 +21,6 @@ C:\Users\Claudio\source\repos\FPTT\FromPicToText\obj\Debug\FromPicToText.g.resou
 C:\Users\Claudio\source\repos\FPTT\FromPicToText\obj\Debug\FromPicToText.Properties.Resources.resources
 C:\Users\Claudio\source\repos\FPTT\FromPicToText\obj\Debug\FromPicToText.csproj.GenerateResource.cache
 C:\Users\Claudio\source\repos\FPTT\FromPicToText\obj\Debug\FromPicToText.csproj.CoreCompileInputs.cache
-C:\Users\Claudio\source\repos\FPTT\FromPicToText\obj\Debug\FromPicToText.csproj.CopyComplete
 C:\Users\Claudio\source\repos\FPTT\FromPicToText\obj\Debug\FromPicToText.exe
 C:\Users\Claudio\source\repos\FPTT\FromPicToText\obj\Debug\FromPicToText.pdb
+C:\Users\Claudio\source\repos\FPTT\FromPicToText\obj\Debug\FromPicToText.csproj.AssemblyReference.cache
